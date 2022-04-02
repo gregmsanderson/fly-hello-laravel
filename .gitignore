@@ -10,7 +10,7 @@
 /storage/framework/views/*
 .env
 .env.backup
-.env*
+.env.dusk.*
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

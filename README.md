@@ -4,12 +4,13 @@ A minimal Laravel application for Fly.io.
 
 ## Run it locally
 
-You will need PHP 8+. You can check the version using `php --version`.
+You will need PHP 8+. You can check the version using `php --version`. And [composer](https://getcomposer.org/).
 
-1. clone this repo
-2. duplicate `.env.example` naming it `.env`
-3. `php artisan key:generate` to generate a new secret key
-4. `php artisan serve`
+1. Clone this repo
+2. Duplicate `.env.example` naming it `.env`
+3. Run `composer install` to install its dependencies
+4. Run `php artisan key:generate` to generate a new secret key
+5. Run `php artisan serve` to run a local development server
 
 You should be able to visit `http://localhost:8000` and see the home page.
 
@@ -23,7 +24,7 @@ app = "fly-hello-laravel"
 APP_URL = "https://fly-hello-laravel.fly.dev"
 ```
 
-2. Run `fly launch` _but_ when it says do you want to deploy, say _No_. Why? Because in production you need to set a secret **APP_KEY**. Without setting that, the app will return an error:
+2. Run `fly launch` _but_ when it gets to the point asking if you want to deploy now, say **no**. Why? Because in production you need a secret **APP_KEY**. Without it the app will return an error like:
 
 > No application encryption key has been specified. "exception":"[object] (Illuminate\\Encryption\\MissingAppKeyException"
 
@@ -32,9 +33,9 @@ APP_URL = "https://fly-hello-laravel.fly.dev"
 
 You should be able to visit `https://your-app-name.fly.dev` and see the home page.
 
-## Build, deploy and run a Laravel application on Fly
+## Build, deploy and run any Laravel application on Fly
 
-In this guide we'll learn how to package a Laravel application into an image that's ready to deploy to Fly's global application platform.
+In this guide we'll learn how we packaged this Laravel application into an image ready to deploy to Fly's global application platform.
 
 This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx.
 

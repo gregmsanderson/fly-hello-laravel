@@ -15,7 +15,7 @@ You should be able to visit `http://localhost:8000` and see the home page.
 
 ## Deploy it to Fly
 
-1. edit the `fly.toml` to replace _fly-hello-laravel_ with your own choice of name in two places:
+1. Edit the `fly.toml` to replace _fly-hello-laravel_ with your own choice of name in the two places it appears:
 
 ```toml
 app = "fly-hello-laravel"
@@ -23,20 +23,20 @@ app = "fly-hello-laravel"
 APP_URL = "https://fly-hello-laravel.fly.dev"
 ```
 
-2. `fly launch` _but_ when it says do you want to deploy, say _No_. Why? Because in production you need to set a secret **APP_KEY**. Without setting that, the app will return an error:
+2. Run `fly launch` _but_ when it says do you want to deploy, say _No_. Why? Because in production you need to set a secret **APP_KEY**. Without setting that, the app will return an error:
 
 > No application encryption key has been specified. "exception":"[object] (Illuminate\\Encryption\\MissingAppKeyException"
 
-3. `fly secrets set APP_KEY=the-value-from-your-env-file`
-4. `fly deploy`
+3. Run `fly secrets set APP_KEY=the-value-from-your-env-file`
+4. Run `fly deploy`
 
 You should be able to visit `https://your-app-name.fly.dev` and see the home page.
 
-## Build, deploy and run any Laravel application
+## Build, deploy and run a Laravel application on Fly
 
 In this guide we'll learn how to package a Laravel application into an image that's ready to deploy to Fly's global application platform.
 
-This is slightly more complicated than it is for other runtimes (such as Node.js) since PHP does not include a web server. We need to add one. Here we use nginx.
+This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx.
 
 ### Create a new application
 
@@ -54,17 +54,7 @@ cd example-app
 php artisan serve
 ```
 
-You should be able to visit `http://localhost:8000` and see the home page.
-
-### Optional: static assets
-
-You do not _have_ to use Laravel's [mix](https://laravel.com/docs/9.x/mix) to compile and minify static assets however if you want to, you will need to install it and run it:
-
-```
-npm install
-
-npm run dev
-```
+You should be able to visit `http://localhost:8000` and see the default Laravel home page.
 
 ### Modify your application
 
@@ -174,31 +164,59 @@ You should also make sure you do not deploy with cached routes. Why? If a differ
 
 ... and your application won't run. We delete the cache in the `Dockerfile` as part of the build.
 
+### Optional: static assets
+
+You do not _have_ to use Laravel's [mix](https://laravel.com/docs/9.x/mix) to compile and minify static assets however if you want to, you will need to install it and run it:
+
+```
+npm install
+
+npm run dev
+```
+
 ### Deploy your application to Fly
 
 If you haven't already done so, [install the Fly CLI](https://fly.io/docs/getting-started/installing-flyctl/) and then [log in to Fly](https://fly.io/docs/getting-started/log-in-to-fly/).
 
-To launch the app, run `fly lauunch` from the application's directory. The CLI will spot the existing `fly.toml`. So when it asks whether you would like to copy its configuration to the new app, say yes.
+To launch the app, run `fly lauunch` from the application's directory.
 
-The CLI will spot the `Dockerfile`.
+The CLI will spot the existing `fly.toml`:
 
-Give the app a name.
+```
+An existing fly.toml file was found for app fly-hello-laravel
+? Would you like to copy its configuration to the new app? (y/N)
+```
 
-Next you'll be prompted to choose an organization. They are used to share resources between Fly users. Since every Fly user has a personal organization, let's pick that.
+Type _y_ (yes).
 
-Next you will be asked for the region to deploy the application in. Pick one closest to you for the best performance. That should already be selected.
+The CLI will spot the `Dockerfile`:
 
-It will ask if you want a database. Say _No_.
+```
+Scanning source code
+Detected a Dockerfile app
+```
 
-It will then prompt you to deploy. Say **No**. Why? In production your application needs to have a secret key set. If you were to deploy right now, you would see errors in the logs along the lines of:
+You'll be asked to give the app a name.
+
+You'll be prompted to choose an organization. They are used to share resources between Fly users. Since every Fly user has a personal organization, let's pick that.
+
+You'll be asked for the region to deploy the application in. Pick one closest to you for the best performance. That should already be selected.
+
+It will ask if you want a database. In this case type _n_ (no).
+
+It will then ask if you want to deploy now. Say **No**. Why? In production your application needs to have a secret key set. If you were to deploy _now_ you would see errors in the logs along the lines of:
 
 > No application encryption key has been specified. "exception":"[object] (Illuminate\\Encryption\\MissingAppKeyException"
 
-You can get the secret `APP_KEY` from your `.env` file (you can generate a new one using `php artisan key:generate`).
+You can get that secret value for `APP_KEY` from your `.env` file (or you can generate a new one using `php artisan key:generate`).
 
-Run `fly secrets set APP-KEY=the-value-of-the-secret-key`. That will stage that secret in Fly, ready to deploy it.
+Run `fly secrets set APP-KEY=the-value-of-the-secret-key`. That will stage that secret in Fly, ready to deploy it:
 
-Now you can go ahead and run `fly deploy`:
+```
+Secrets are staged for the first deployment
+```
+
+Now you can go ahead and run `fly deploy` and the build should proceed:
 
 ```
 ...
@@ -213,7 +231,11 @@ You have successfully built and deployed your Laravel application on Fly.
 
 ### View your application on Fly
 
-Use `fly status` to get its details:
+Use `fly open` as a shortcut to open the app's URL in your browser. If you are using http, Fly will upgrade it to https.
+
+Use `fly logs` to see the log files.
+
+Use `fly status` to see its details:
 
 ```
 App
@@ -234,9 +256,3 @@ Instances
 ID      	PROCESS	VERSION	REGION	DESIRED	STATUS 	HEALTH CHECKS     	RESTARTS	CREATED
 abcdefgh	app    	1     	lhr   	run    	running	2 total, 2 passing	0       	0h10m ago
 ```
-
-### Bonus commands
-
-Use `fly open` as a shortcut to open the app's URL in your browser. If you are using http, Fly will upgrade it to https.
-
-Use `fly logs` to see the log files.

@@ -37,13 +37,13 @@ You should be able to visit `https://your-app-name.fly.dev` and see the home pag
 
 In this guide we'll learn how we packaged this Laravel application into an image ready to deploy to Fly's global application platform.
 
-This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx.
+This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx. And so we need to keep both it _and_ PHP running. We do that using `supervisor`.
 
-### Create a new application
+### Create a new Laravel application
 
 If you already have a Laravel application you would like to deploy, skip this step.
 
-There are different approaches to creating a brand new Laravel project depending on your OS. Here we've used the [laravel-installer](https://laravel.com/docs/9.x#the-laravel-installer) approach. It assumes you have [composer](https://getcomposer.org/doc/00-intro.md#system-requirements) and PHP already installed:
+There are different approaches to creating a brand new Laravel application depending on your OS. Here we've used the [laravel-installer](https://laravel.com/docs/9.x#the-laravel-installer) approach. It assumes you have [composer](https://getcomposer.org/doc/00-intro.md#system-requirements) and PHP already installed:
 
 ```
 composer global require laravel/installer
@@ -59,16 +59,18 @@ You should be able to visit `http://localhost:8000` and see the default Laravel 
 
 ### Modify your application
 
-Now that you have a Laravel application working locally, you need to add some files in order to run it on Fly. This method uses _supervisor_ to keep _nginx_ and _php-fpm_ running. There are other ways to do this though: [https://fly.io/docs/app-guides/multiple-processes/](https://fly.io/docs/app-guides/multiple-processes/).
+Now that you have a Laravel application working locally, you need to add some files in order to run it on Fly. This method uses `supervisor` to keep nginx and PHP running. There are other ways to do this though. See: [https://fly.io/docs/app-guides/multiple-processes/](https://fly.io/docs/app-guides/multiple-processes/).
 
 To make _this_ approach work you need to add four things:
 
 1. a `Dockerfile`
 2. a `.dockerignore`
 3. a `/docker` folder which contains configuration files for PHP, nginx, and supervisor (that keeps nginx and PHP running)
-4. a `fly.toml` file to tell Fly what type of application you have (its port, protocol, and so on)
+4. a `fly.toml` file to tell Fly what type of application you have (its port, protocol, and so on). Fly can generate one for you, however we can provide our own containing the environment variables we know that we'll need
 
-Let's explore each of those:
+You can just copy the files we've provided (adjusting each file depending upon your application's requirements). And then skip ahead to **Add a fly.toml** below.
+
+But if you'd like to know why we made those four changes, please continue:
 
 #### Add a Dockerfile
 

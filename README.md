@@ -65,8 +65,8 @@ To make _this_ approach work you need to add four things:
 
 1. a `Dockerfile`
 2. a `.dockerignore`
-3. a `/docker` folder which contains configuration files for PHP, nginx, and supervisor (that keeps nginx and PHP running)
-4. a `fly.toml` file to tell Fly what type of application you have (its port, protocol, and so on). Fly can generate one for you, however we can provide our own containing the environment variables we know that we'll need
+3. a `/docker` folder which contains configuration files for PHP, nginx, and supervisor
+4. a `fly.toml` that tells Fly what type of application you have (its port, protocol, and so on). Fly can generate this for you, however we can provide our own containing the environment variables we know that we'll need
 
 You can just copy the files we've provided (adjusting each file depending upon your application's requirements). And then skip ahead to **Add a fly.toml** below.
 

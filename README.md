@@ -169,7 +169,7 @@ You should also make sure you do not deploy with cached routes. Why? If a differ
 
 ### Optional: static assets
 
-You do not _have_ to use Laravel's [mix](https://laravel.com/docs/9.x/mix) to compile and minify static assets however if you want to, you will need to install it and run it:
+You do not have to use Laravel's [mix](https://laravel.com/docs/9.x/mix) to compile and minify static assets however if you want to, you will need to install it and run it:
 
 ```
 npm install
@@ -181,7 +181,7 @@ npm run dev
 
 If you haven't already done so, [install the Fly CLI](https://fly.io/docs/getting-started/installing-flyctl/) and then [log in to Fly](https://fly.io/docs/getting-started/log-in-to-fly/).
 
-To launch the app, run `fly lauunch` from the application's directory.
+To launch the app, run `fly launch` from the application's directory.
 
 The CLI will spot the existing `fly.toml`:
 

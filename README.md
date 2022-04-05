@@ -16,7 +16,7 @@ You should be able to visit `http://localhost:8000` and see the home page.
 
 ## Deploy it to Fly
 
-1. Edit the `fly.toml` to replace _fly-hello-laravel_ with your own choice of name in the two places it appears:
+1. Edit the provided `fly.toml` so it has your choice of app name and URL instead of these:
 
 ```toml
 app = "fly-hello-laravel"
@@ -24,24 +24,24 @@ app = "fly-hello-laravel"
 APP_URL = "https://fly-hello-laravel.fly.dev"
 ```
 
-2. Run `fly launch` _but_ when it gets to the point asking if you want to deploy now, say **no**. Why? Because in production you need a secret **APP_KEY**. Without it the app will return an error like:
+2. Run `fly launch`. When it gets to the point asking if you want to deploy now, say **No**. Why? Because in production you need a secret **APP_KEY**. Without it the app will return an error like:
 
 > No application encryption key has been specified. "exception":"[object] (Illuminate\\Encryption\\MissingAppKeyException"
 
-3. Run `fly secrets set APP_KEY=the-value-from-your-env-file`
+3. Set that _APP_KEY_ by running `fly secrets set APP_KEY=the-value-from-your-env-file`
 4. Run `fly deploy`
 
-You should be able to visit `https://your-app-name.fly.dev` and see the home page.
+You should be able to visit `https://your-app-name.fly.dev` and see the Laravel demo home page.
 
 ## Build, deploy and run any Laravel application on Fly
 
 In this guide we'll learn how we packaged this Laravel application into an image ready to deploy to Fly's global application platform.
 
-This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx. And so we need to keep both it _and_ PHP running. We do that using `supervisor`.
+This is _slightly_ more complicated than it is for other runtimes since PHP does not include a web server. We need to add one. Here we use nginx. And so we need to keep both it _and_ PHP running. We do that using [supervisor](https://github.com/Supervisor/supervisor).
 
 ### Create a new Laravel application
 
-If you already have a Laravel application you would like to deploy, skip this step.
+If you _already_ have a Laravel application you would like to deploy, skip this step.
 
 There are different approaches to creating a brand new Laravel application depending on your OS. Here we've used the [laravel-installer](https://laravel.com/docs/9.x#the-laravel-installer) approach. It assumes you have [composer](https://getcomposer.org/doc/00-intro.md#system-requirements) and PHP already installed:
 
@@ -59,7 +59,7 @@ You should be able to visit `http://localhost:8000` and see the default Laravel 
 
 ### Modify your application
 
-Now that you have a Laravel application working locally, you need to add some files in order to run it on Fly. This method uses `supervisor` to keep nginx and PHP running. There are other ways to do this though. See: [https://fly.io/docs/app-guides/multiple-processes/](https://fly.io/docs/app-guides/multiple-processes/).
+Now that you have _a_ Laravel application working locally, you need to add some files in order to run it on Fly. This method uses [supervisor](https://github.com/Supervisor/supervisor) to keep nginx and PHP running. There are other ways to do this though. See: [https://fly.io/docs/app-guides/multiple-processes/](https://fly.io/docs/app-guides/multiple-processes/).
 
 To make _this_ approach work you need to add four things:
 
@@ -70,7 +70,7 @@ To make _this_ approach work you need to add four things:
 
 You can just copy the files we've provided (adjusting each file depending upon your application's requirements). And then skip ahead to **Add a fly.toml** below.
 
-But if you'd like to know why we made those four changes, please continue:
+But if you'd like to know why we made those changes, please continue:
 
 #### Add a Dockerfile
 

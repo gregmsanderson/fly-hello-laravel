@@ -94,7 +94,7 @@ During the build they get moved to where the various processes expect them to be
 
 These configuration files will likely vary depending on the functionality your application needs and the size of Fly vm you choose. For example you could adjust the request timeouts or the amount of memory allocated to PHP.
 
-What are the files in this folder?
+**What are the files in this folder?**
 
 The `docker/supervisor.conf` file governs what processes `supervisor` starts and/or keeps running. In this case we have a group of programs. At a minimum we need `nginx` and `php-fpm` to be running. You will see they are set to _autorestart_. That's important as we need them both to be running for the application to serve requests.
 
@@ -147,7 +147,7 @@ If you have deployed any application to Fly before, you will recognise this. The
 
 Our `fly.toml` includes some standard settings, such as exposing port `443` and `80` to the outside world, and have our app listening on port `8080`. It has a http healthcheck on `/` which (if all is well) will return a `200` status code. Notice also the `[env]` section which contains environment variables. This contains any variable whose value is not secret.
 
-If using our `fly.toml` you will need to update the application name from _fly-hello-laravel_ in two places:
+If using our `fly.toml` you will need to update the application name from _fly-hello-laravel_ to your own **app-name-here** in _two_ places:
 
 ```toml
 app = "fly-hello-laravel"
@@ -169,13 +169,9 @@ You should also make sure you do not deploy with cached routes. Why? If a differ
 
 ### Optional: static assets
 
-You do not have to use Laravel's [mix](https://laravel.com/docs/9.x/mix) to compile and minify static assets however if you want to, you will need to install it and run it:
+The sample app does not use Laravel's [mix](https://laravel.com/docs/9.x/mix) (to minify static assets) however if you want to use that in _your_ app, you will need to install its dependencies with `npm install`.
 
-```
-npm install
-
-npm run dev
-```
+You can then run _mix_ locally using `npx mix` or `npx mix --production`.
 
 ### Deploy your application to Fly
 
@@ -186,7 +182,7 @@ To launch the app, run `fly launch` from the application's directory.
 The CLI will spot the existing `fly.toml`:
 
 ```
-An existing fly.toml file was found for app fly-hello-laravel
+An existing fly.toml file was found for app app-name-here
 ? Would you like to copy its configuration to the new app? (y/N)
 ```
 
@@ -199,21 +195,21 @@ Scanning source code
 Detected a Dockerfile app
 ```
 
-You'll be asked to give the app a name.
+You'll be asked to give the app a name. Type in your own **app-name-here**.
 
 You'll be prompted to choose an organization. They are used to share resources between Fly users. Since every Fly user has a personal organization, let's pick that.
 
 You'll be asked for the region to deploy the application in. Pick one closest to you for the best performance. That should already be selected.
 
-It will ask if you want a database. In this case type _n_ (no).
+It will ask if you want a database. In this case type _N_ (no). The sample app does not need one
 
-It will then ask if you want to deploy now. Say **No**. Why? In production your application needs to have a secret key set. If you were to deploy _now_ you would see errors in the logs along the lines of:
+It will _then_ ask if you want to deploy now. Say **No**. Why? In production your application needs to have a secret key set. If you were to deploy _now_ you would see errors in the logs along the lines of:
 
 > No application encryption key has been specified. "exception":"[object] (Illuminate\\Encryption\\MissingAppKeyException"
 
 You can get that secret value for `APP_KEY` from your `.env` file (or you can generate a new one using `php artisan key:generate`).
 
-Run `fly secrets set APP-KEY=the-value-of-the-secret-key`. That will stage that secret in Fly, ready to deploy it:
+Run `fly secrets set APP_KEY=the-value-of-the-secret-key`. That will stage that secret in Fly, ready to deploy it:
 
 ```
 Secrets are staged for the first deployment
@@ -259,3 +255,20 @@ Instances
 ID      	PROCESS	VERSION	REGION	DESIRED	STATUS 	HEALTH CHECKS     	RESTARTS	CREATED
 abcdefgh	app    	1     	lhr   	run    	running	2 total, 2 passing	0       	0h10m ago
 ```
+
+## Notes
+
+- The `Dockerfile` deliberately does not use the `--no-cache` flag when installing packages as that caused random errors. For example clearly there _is_ an `nginx` package, however installing `nginx` would occasionally fail:
+
+```
+ => ERROR [ 7/31] RUN apk add --no-cache nginx
+ > [ 7/31] RUN apk add --no-cache nginx
+#10 0.413 fetch https://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
+#10 5.419 WARNING: Ignoring https://dl-cdn.alpinelinux.org/alpine/edge/main: temporary error (try again later)
+#10 5.420 fetch https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/APKINDEX.tar.gz
+#10 5.841 ERROR: unable to select packages:
+#10 5.881   nginx (no such package):
+#10 5.881
+```
+
+- The `Dockerfile` runs `mix` with `npx` so that we can use a local copy of it.

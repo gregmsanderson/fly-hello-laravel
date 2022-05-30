@@ -90,7 +90,7 @@ It is a personal preference to use a _deny-unless-admitted_ approach for safety.
 
 This contains the various configuration files for PHP, nginx and supervisor to tell them what to do.
 
-During the build they get moved to where the various processes expect them to be. For example in the `Dockerfile` you will see we move the custom nginx condfguration file to where nginx expects it to be by using this command `RUN mv docker/nginx.conf /etc/nginx/nginx.conf`.
+During the build they get moved to where the various processes expect them to be. For example in the `Dockerfile` you will see we move the custom nginx configuration file to where nginx expects it to be by using this command `RUN mv docker/nginx.conf /etc/nginx/nginx.conf`.
 
 These configuration files will likely vary depending on the functionality your application needs and the size of Fly vm you choose. For example you could adjust the request timeouts or the amount of memory allocated to PHP.
 
